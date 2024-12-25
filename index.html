@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoramento de Tela com Consentimento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #message {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    #startButton {
+      background-color: #4CAF50;
+      color: white;
+      font-size: 18px;
+      padding: 15px 32px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #startButton:hover {
+      background-color: #45a049;
+    }
+    video {
+      margin-top: 20px;
+      width: 80%;
+      max-width: 800px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="message">
+    <p><strong>Por questões de segurança e monitoramento de atividades, por favor, clique no botão abaixo para permitir o compartilhamento da sua tela. Este processo será monitorado para fins de auditoria.</strong></p>
+  </div>
+
+  <button id="startButton">Iniciar Compartilhamento de Tela</button>
+
+  <video id="localVideo" autoplay></video>
+
+  <script>
+    const startButton = document.getElementById('startButton');
+    const localVideo = document.getElementById('localVideo');
+
+    startButton.addEventListener('click', async () => {
+      const userConfirmed = confirm("Você está ciente de que sua tela será compartilhada e monitorada para fins de auditoria e segurança?");
+
+      if (userConfirmed) {
+        try {
+          // Solicita ao navegador para capturar a tela
+          const stream = await navigator.mediaDevices.getDisplayMedia({
+            video: {
+              cursor: "always" // O cursor será visível durante o compartilhamento
+            }
+          });
+
+          // Exibe a tela compartilhada no vídeo
+          localVideo.srcObject = stream;
+
+          // Opcional: Solicita que a janela de vídeo entre em tela cheia
+          if (localVideo.requestFullscreen) {
+            localVideo.requestFullscreen();
+          } else if (localVideo.mozRequestFullScreen) { // Para Firefox
+            localVideo.mozRequestFullScreen();
+          } else if (localVideo.webkitRequestFullscreen) { // Para Chrome, Safari
+            localVideo.webkitRequestFullscreen();
+          }
+        } catch (err) {
+          console.error("Erro ao compartilhar a tela: ", err);
+        }
+      } else {
+        alert("Você deve fornecer o consentimento para continuar.");
+      }
+    });
+  </script>
+
+</body>
+</html>
